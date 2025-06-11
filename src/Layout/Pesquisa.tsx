@@ -11,7 +11,7 @@ import {
 
 function Pesquisa() {
   return (
-    <div className="mr-72 ml-72 border-2 p-4 rounded-sm">
+    <div className="mx-72 border-2 border-zinc-300 p-4 rounded-md">
       <div className="flex gap-4">
         <div className="relative flex-1">
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
@@ -20,13 +20,13 @@ function Pesquisa() {
           <Input
             type="text"
             placeholder="Buscar Tarefas..."
-            className="pl-10 pr-4 py-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-gray-400"
+            className="pl-10 pr-4 py-2 border-2 border-zinc-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-gray-400"
           />
         </div>
 
         <div className="w-60">
             <Select>
-                <SelectTrigger className="w-full flex items-center gab-2">
+                <SelectTrigger className="w-full border-zinc-300 flex items-center gab-2">
                     <LiaFilterSolid className="text-lg text-gray-500" />
                     <SelectValue placeholder='Todas as tarefas'/>
                 </SelectTrigger>

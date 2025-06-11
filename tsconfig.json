@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
     "jsx": "react-jsx",
-    "paths": {
-      "@/*": ["*"]
+      "paths": {
+      "@/*": ["src/*"]
     },
-    "baseUrl": "src", // ✅ Adicione essa linha
+    "baseUrl": ".", // ✅ Adicione essa linha
     "target": "es2016",
     "module": "commonjs",
     "esModuleInterop": true,
