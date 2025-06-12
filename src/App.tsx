@@ -1,22 +1,22 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 // paginas  
-import BarraDeTarefas from "./Layout/BarraDeTarefas";
-import Pesquisa from "./Layout/Pesquisa";
-import Progresso from "./Layout/Progresso";
-import NovaTarefa from "./Components/Pages/NovaTarefa"
+import TaskBar from "./Layout/TaskBar";
+import Search from "./Layout/Search";
+import Progress from "./Layout/Progress";
+import NewTask from "./Components/Pages/NewTask"
 // store do zustand para condiçao
-import { useTarefasStore } from "./Zustand/Store/TarefasStore";
+import { useTasksStore } from "./Zustand/Store/TaksStore";
 
-function LayoutPrincipal() {
+function MainLayout() {
 
-  const {total} = useTarefasStore()
+  const {total} = useTasksStore()
 
 
   return(
     <>
-      <BarraDeTarefas/>
-      <Pesquisa/>
-      {total > 0 ? <Progresso/> : null}
+      <TaskBar/>
+      <Search/>
+      {total > 0 ? <Progress/> : null}
     </>
   )
 }
@@ -27,8 +27,8 @@ function App() {
   return (
       <Router>
         <Routes>
-            <Route path="/" element={<LayoutPrincipal/>} />
-            <Route path="/NovaTarefa" element={<NovaTarefa/>} />
+            <Route path="/" element={<MainLayout/>} />
+            <Route path="/NewTask" element={<NewTask/>} />
         </Routes>
       </Router>
   )
