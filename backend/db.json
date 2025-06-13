@@ -1,5 +1,20 @@
 {
-    "tarefas": [
-
-    ]
+  "tarefas": [
+    {
+      "id": "bc73",
+      "titulo": "dasdsdad",
+      "descricao": "dadsdasd",
+      "prioridade": "media",
+      "categoria": "trabalho",
+      "vencimento": "2025-06-25T03:00:00.000Z"
+    },
+    {
+      "id": "af27",
+      "titulo": "aa",
+      "descricao": "",
+      "prioridade": "baixa",
+      "categoria": "pessoal",
+      "vencimento": "2025-06-15T03:00:00.000Z"
+    }
+  ]
 }
