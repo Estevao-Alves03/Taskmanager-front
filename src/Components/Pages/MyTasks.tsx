@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useTasksStore } from "../Zustand/Store/TaksStore";
+import { useEffect } from "react";
+import { useTasksStore } from "../../Zustand/Store/TaksStore";
 
 interface TaskItemProps {
   id: string;
@@ -82,91 +82,23 @@ function TaskItem({
   );
 }
 
-interface Task {
-  done: boolean;
-  title: string;
-  description?: string;
-  date: string;
-  priority: "baixa" | "média" | "alta";
-  category: string;
-  overdue?: boolean;
-}
-
-interface RawTaskFromDB {
-  id: string;
-  titulo: string;
-  descricao?: string;
-  prioridade: "baixa" | "média" | "alta" | "media";
-  categoria: string;
-  vencimento: string;
-}
-
 export default function TaskList() {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const setTarefas = useTasksStore((state) => state.setTarefas);
   const tarefas = useTasksStore((state) => state.tarefas);
+  const loadTasks = useTasksStore((state) => state.loadTasks);
 
   useEffect(() => {
-    fetch("http://localhost:3000/tarefas")
-      .then((res) => res.json())
-      .then((data: RawTaskFromDB[]) => {
-        const mappedTasks: Task[] = data.map((t) => {
-          const prioridade =
-            t.prioridade.toLowerCase() === "media"
-              ? "média"
-              : (t.prioridade as "baixa" | "média" | "alta");
-          const vencimentoDate = new Date(t.vencimento);
-          const now = new Date();
-          const overdue = vencimentoDate < now;
+    loadTasks();
+  }, [loadTasks]);
 
-          return {
-            done: false,
-            title: t.titulo,
-            description: t.descricao,
-            date: t.vencimento,
-            priority: prioridade,
-            category: t.categoria,
-            overdue,
-          };
-        });
-
-        setTasks(mappedTasks);
-        setTarefas(
-          mappedTasks.map((task) => ({
-            id: crypto.randomUUID(),
-            done: task.done,
-          }))
-        );
-
-        setLoading(false);
-      })
-      .catch(() => {
-        setLoading(false);
-      });
-  }, [setTarefas]);
-
-  if (loading) return <p>Carregando tarefas...</p>;
-  if (!tasks.length)
+  if (!tarefas.length)
     return (
       <p className="mx-72 mt-5 text-lg font-serif">Nenhuma tarefa encontrada.</p>
     );
 
   return (
     <div className="flex flex-col gap-4 mx-72 mt-5">
-      {tarefas.map((tarefa, index) => (
-        <TaskItem
-          key={tarefa.id}
-          id={tarefa.id}
-          done={tarefa.done}
-          title={tasks[index]?.title || ""}
-          description={tasks[index]?.description}
-          date={tasks[index]?.date || ""}
-          priority={tasks[index]?.priority || "baixa"}
-          category={tasks[index]?.category || ""}
-          overdue={tasks[index]?.overdue}
-        />
+      {tarefas.map((task) => (
+        <TaskItem key={task.id} {...task} />
       ))}
     </div>
   );

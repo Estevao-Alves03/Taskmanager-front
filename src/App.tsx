@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import TaskBar from "./Layout/TaskBar";
 import Search from "./Layout/Search";
 import Progress from "./Layout/Progress";
-import MyTasks from './Layout/MyTasks'
+import MyTasks from './Components/Pages/MyTasks'
 import NewTask from "./Components/Pages/NewTask"
 // store do zustand para condiçao
 import { useTasksStore } from "./Zustand/Store/TaksStore";

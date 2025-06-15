@@ -4,8 +4,10 @@
       "paths": {
       "@/*": ["src/*"]
     },
+    "lib": ["es2019", "dom"],
+    "target": "es2019",
+    "types": ["vite/client"],
     "baseUrl": ".", // ✅ Adicione essa linha
-    "target": "es2016",
     "module": "commonjs",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
