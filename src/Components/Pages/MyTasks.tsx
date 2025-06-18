@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useTasksStore } from "../../Zustand/Store/TaksStore";
+import React from "react";
 
 interface TaskItemProps {
   id: string;
@@ -12,7 +13,8 @@ interface TaskItemProps {
   overdue?: boolean;
 }
 
-function TaskItem({
+
+const TaskItem = React.memo(function TaskItem({
   id,
   done,
   title,
@@ -23,6 +25,7 @@ function TaskItem({
   overdue,
 }: TaskItemProps) {
   const toggleConcluida = useTasksStore((state) => state.toggleConcluida);
+  
 
   return (
     <div
@@ -80,11 +83,13 @@ function TaskItem({
       </div>
     </div>
   );
-}
+});
+
 
 export default function TaskList() {
   const tarefas = useTasksStore((state) => state.tarefas);
   const loadTasks = useTasksStore((state) => state.loadTasks);
+
 
   useEffect(() => {
     loadTasks();
@@ -92,7 +97,9 @@ export default function TaskList() {
 
   if (!tarefas.length)
     return (
-      <p className="mx-72 mt-5 text-lg font-serif">Nenhuma tarefa encontrada.</p>
+      <p className="mx-72 mt-5 text-lg font-serif">
+        Nenhuma tarefa encontrada.
+      </p>
     );
 
   return (

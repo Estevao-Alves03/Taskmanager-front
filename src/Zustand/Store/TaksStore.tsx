@@ -1,4 +1,6 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { v4 as uuidv4 } from "uuid";
 
 export interface Tarefa {
   id: string;
@@ -11,94 +13,88 @@ export interface Tarefa {
   overdue?: boolean;
 }
 
-interface RawTaskFromDB {
-  id: string;
-  titulo: string;
-  descricao?: string;
-  prioridade: "baixa" | "média" | "alta" | "media";
-  categoria: string;
-  vencimento: string;
-  done?: boolean;
-}
-
 interface TasksStore {
   tarefas: Tarefa[];
   concluidas: number;
   total: number;
+  filter: "todas" | "pendentes" | "concluidas";
+  setFilter: (filter: "todas" | "pendentes" | "concluidas") => void;
   setTarefas: (tarefas: Tarefa[]) => void;
   toggleConcluida: (id: string) => void;
   loadTasks: () => Promise<void>;
-  addTask: (tarefa: Tarefa) => void; // nova função
+  addTask: (tarefa: Omit<Tarefa, "id" | "done">) => void;
 }
 
-export const useTasksStore = create<TasksStore>((set, get) => ({
-  tarefas: [],
-  concluidas: 0,
-  total: 0,
+export const useTasksStore = create<TasksStore>()(
+  persist(
+    (set, get) => ({
+      tarefas: [],
+      concluidas: 0,
+      total: 0,
+      filter: "todas",
+      setFilter: (filter) => set({ filter }),
 
-  setTarefas: (tarefas) =>
-    set(() => ({
-      tarefas,
-      concluidas: tarefas.filter((t) => t.done).length,
-      total: tarefas.length,
-    })),
+      setTarefas: (tarefas: Tarefa[]) =>
+        set(() => ({
+          tarefas,
+          concluidas: tarefas.filter((t) => t.done).length,
+          total: tarefas.length,
+        })),
 
-  toggleConcluida: (id) =>
-    set((state) => {
-      const tarefas = state.tarefas.map((t) =>
-        t.id === id ? { ...t, done: !t.done } : t
-      );
-      return {
-        tarefas,
-        concluidas: tarefas.filter((t) => t.done).length,
-        total: tarefas.length,
-      };
+      toggleConcluida: (id: string) =>
+        set((state) => {
+          const tarefas = state.tarefas.map((t) =>
+            t.id === id ? { ...t, done: !t.done } : t
+          );
+          return {
+            tarefas,
+            concluidas: tarefas.filter((t) => t.done).length,
+            total: tarefas.length,
+          };
+        }),
+
+      loadTasks: async () => {
+        try {
+          const res = await fetch("http://localhost:8000/api/tasks");
+          const data: Tarefa[] = await res.json();
+
+          const now = new Date();
+
+          const mapped = data.map((t) => {
+            const vencimentoDate = new Date(t.date);
+            return {
+              ...t,
+              overdue: vencimentoDate < now,
+            };
+          });
+
+          set({
+            tarefas: mapped,
+            concluidas: mapped.filter((t) => t.done).length,
+            total: mapped.length,
+          });
+        } catch (error) {
+          console.error("Erro ao carregar tarefas:", error);
+        }
+      },
+
+      addTask: (novaTarefa) =>
+        set((state) => {
+          const tarefaComId: Tarefa = {
+            ...novaTarefa,
+            id: uuidv4(),
+            done: false,
+          };
+          const tarefas = [...state.tarefas, tarefaComId];
+          return {
+            tarefas,
+            concluidas: tarefas.filter((t) => t.done).length,
+            total: tarefas.length,
+          };
+        }),
     }),
-
-  loadTasks: async () => {
-    try {
-      const res = await fetch("http://localhost:8000/api/tasks");
-      const data: RawTaskFromDB[] = await res.json();
-
-      const mapped: Tarefa[] = data.map((t) => {
-        const prioridade =
-          t.prioridade.toLowerCase() === "media"
-            ? "média"
-            : (t.prioridade as "baixa" | "média" | "alta");
-
-        const vencimentoDate = new Date(t.vencimento);
-        const now = new Date();
-        const overdue = vencimentoDate < now;
-
-        return {
-          id: t.id,
-          done: t.done ?? false,
-          title: t.titulo,
-          description: t.descricao,
-          date: t.vencimento,
-          priority: prioridade,
-          category: t.categoria,
-          overdue,
-        };
-      });
-
-      set({
-        tarefas: mapped,
-        concluidas: mapped.filter((t) => t.done).length,
-        total: mapped.length,
-      });
-    } catch (error) {
-      console.error("Erro ao carregar tarefas:", error);
+    {
+      name: "tasks-storage",
     }
-  },
-
-  addTask: (tarefa) => {
-    const { tarefas } = get();
-    const novasTarefas = [...tarefas, tarefa];
-    set({
-      tarefas: novasTarefas,
-      concluidas: novasTarefas.filter((t) => t.done).length,
-      total: novasTarefas.length,
-    });
-  },
-}));
+  )
+);

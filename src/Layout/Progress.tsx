@@ -7,7 +7,7 @@ function Progresso() {
   const pendentes = total - concluidas;
 
   return (
-    <div className='mx-72 mt-6'>
+    <div className='mx-72 mt-6 mb-6'>
       <div className='grid grid-cols-3 gap-4 '>
         <div  className=' w-full p-4 rounded-md border shadow-sm'>
             <h2 className='text-lg text-gray-600'>Total de tarefas</h2>

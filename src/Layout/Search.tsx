@@ -1,10 +1,11 @@
 import { Input } from "../components/ui/input";
 import { RxMagnifyingGlass } from "react-icons/rx";
 import { LiaFilterSolid } from "react-icons/lia";
-import { useState } from "react";
+import { useTasksStore } from "@/Zustand/Store/TaksStore";
 
 function Search() {
-  const [filtro, setFiltro] = useState("todas");
+  const filter = useTasksStore((state) => state.filter);
+  const setFilter = useTasksStore((state) => state.setFilter)
 
   return (
     <div className="mx-72 border-2 border-zinc-300 p-4 rounded-md">
@@ -24,13 +25,13 @@ function Search() {
           <div className="flex items-center border border-zinc-300 rounded px-3 py-2 gap-2">
             <LiaFilterSolid className="text-lg text-gray-500" />
             <select
-              value={filtro}
-              onChange={(e) => setFiltro(e.target.value)}
+              value={filter}
+              onChange={(e) => setFilter(e.target.value as 'todas' | 'concluidas' | 'pendentes')}
               className="w-full bg-transparent outline-none cursor-pointer"
             >
-              <option value="todas">Todas as tarefas</option>
-              <option value="concluidas">Concluidas</option>
-              <option value="pendentes">Pendentes</option>
+              <option value='todas'>Todas as tarefas</option>
+              <option value='concluidas'>Concluidas</option>
+              <option value='pendentes'>Pendentes</option>
             </select>
           </div>
         </div>

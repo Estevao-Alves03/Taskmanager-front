@@ -13,7 +13,7 @@ import {
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import api from "../../services/api";
-import { useTasksStore } from "../../Zustand/Store/TaksStore";
+import { useTasksStore, Tarefa } from "../../Zustand/Store/TaksStore";
 
 function Novatarefa() {
   const [date, setDate] = useState<Date | undefined>(undefined);
@@ -22,7 +22,6 @@ function Novatarefa() {
   const [titulo, setTitulo] = useState("");
   const [descricao, setDescricao] = useState("");
 
-  const loadTasks = useTasksStore((state) => state.loadTasks);
   const navigate = useNavigate();
 
   const BackHome = () => navigate("/");
@@ -36,35 +35,50 @@ function Novatarefa() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!prioridade) {
-      alert("Por favor, selecione a prioridade.");
-      return;
-    }
+  if (!prioridade) {
+    alert("Por favor, selecione a prioridade.");
+    return;
+  }
 
-    if (!categoria) {
-      alert("Por favor, selecione a categoria.");
-      return;
-    }
+  if (!categoria) {
+    alert("Por favor, selecione a categoria.");
+    return;
+  }
 
-    try {
-      await api.post("/api/tasks", {
-        title: titulo,
-        description: descricao,
-        due_date: date ? date.toISOString().split("T")[0] : null,
-        priority: prioridade,
-        category: categoria,
-      });
+  try {
+    const response = await api.post("/api/tasks", {
+      title: titulo,
+      description: descricao,
+      due_date: date ? date.toISOString().split("T")[0] : null,
+      priority: prioridade,
+      category: categoria,
+    });
 
-      await loadTasks();
+    const novaTarefa = response.data; // ajuste conforme o formato do backend
 
-      navigate("/");
-    } catch (error) {
-      console.error("Erro ao criar tarefa:", error);
-      alert("Erro ao criar tarefa");
-    }
-  };
+    // Adaptar os campos para Tarefa se necessário
+    const tarefaFormatada: Tarefa = {
+      id: novaTarefa.id,
+      done: novaTarefa.done ?? false,
+      title: novaTarefa.titulo || novaTarefa.title || titulo,
+      description: novaTarefa.descricao || novaTarefa.description || descricao,
+      date: novaTarefa.vencimento || novaTarefa.due_date || (date ? date.toISOString().split("T")[0] : ""),
+      priority: novaTarefa.prioridade || novaTarefa.priority || prioridade,
+      category: novaTarefa.categoria || novaTarefa.category || categoria,
+      overdue: false, // opcional, pode calcular se quiser
+    };
+
+    useTasksStore.getState().addTask(tarefaFormatada); // adiciona localmente
+
+    navigate("/");
+  } catch (error) {
+    console.error("Erro ao criar tarefa:", error);
+    alert("Erro ao criar tarefa");
+  }
+};
+
 
   return (
     <div className="mx-72 mb-20 p-4 mt-4">

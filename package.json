@@ -28,6 +28,7 @@
     "react-router-dom": "^7.6.2",
     "tailwind-merge": "^3.3.1",
     "tailwindcss-animate": "^1.0.7",
+    "uuid": "^11.1.0",
     "zustand": "^5.0.5"
   },
   "devDependencies": {
@@ -36,6 +37,7 @@
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@types/react-router-dom": "^5.3.3",
+    "@types/uuid": "^10.0.0",
     "@vitejs/plugin-react": "^4.5.2",
     "autoprefixer": "^10.4.21",
     "eslint": "^9.28.0",

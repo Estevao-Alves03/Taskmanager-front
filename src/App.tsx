@@ -5,18 +5,24 @@ import Search from "./Layout/Search";
 import Progress from "./Layout/Progress";
 import MyTasks from './Components/Pages/MyTasks'
 import NewTask from "./Components/Pages/NewTask"
+import TaskFilter from "./Components/Pages/TaskFilter"
 // store do zustand para condiçao
 import { useTasksStore } from "./Zustand/Store/TaksStore";
 
 function MainLayout() {
 
 const total = useTasksStore((state) => state.total);
+const filter = useTasksStore((state) => state.filter)
 
   return(
     <>
       <TaskBar/>
       <Search/>
-      <MyTasks/>
+      {filter === "todas" || !filter ? (
+        <MyTasks/> 
+      ) : (
+        <TaskFilter />
+      )}
       {total > 0 ? <Progress/> : null}
     </>
   )
