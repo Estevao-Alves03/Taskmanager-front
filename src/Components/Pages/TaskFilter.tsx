@@ -6,8 +6,8 @@ interface TaskItemProps {
   done: boolean;
   title: string;
   description?: string;
-  date: string;
-  priority: "baixa" | "média" | "alta";
+  due_date: string;
+  priority: "baixa" | "media" | "alta";
   category: string;
   overdue?: boolean;
 }
@@ -22,12 +22,14 @@ function TaskFilter() {
         return tarefas.filter((t) => t.done);
       case "pendentes":
         return tarefas.filter((t) => !t.done);
+      case "atrasadas": 
+        return tarefas.filter((t) => t.overdue)
       default:
         return tarefas;
     }
   }, [tarefas, filter]);
 
-  const isFiltered = filter === "concluidas" || filter === "pendentes";
+  const isFiltered = filter === "concluidas" || filter === "pendentes" || filter === "atrasadas";
 
   return (
     <div>
@@ -39,7 +41,7 @@ function TaskFilter() {
               done,
               title,
               description,
-              date,
+              due_date,
               priority,
               category,
               overdue,
@@ -76,7 +78,7 @@ function TaskFilter() {
                     </p>
                   )}
                   <div className="flex items-center gap-2 mt-2 text-xs text-gray-500">
-                    <time>{new Date(date).toLocaleDateString()}</time>
+                    <time>{new Date(due_date).toLocaleDateString()}</time>
                     {overdue && (
                       <span className="ml-2 text-red-600 font-semibold">Atrasada</span>
                     )}
@@ -87,7 +89,7 @@ function TaskFilter() {
                     className={`px-2 py-1 rounded text-xs font-semibold ${
                       priority === "baixa"
                         ? "bg-green-100 text-green-800"
-                        : priority === "média"
+                        : priority === "media"
                         ? "bg-yellow-100 text-yellow-800"
                         : "bg-red-100 text-red-800"
                     }`}

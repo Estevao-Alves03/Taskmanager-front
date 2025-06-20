@@ -7,8 +7,8 @@ interface TaskItemProps {
   done: boolean;
   title: string;
   description?: string;
-  date: string;
-  priority: "baixa" | "média" | "alta";
+  due_date: string;
+  priority: "baixa" | "media" | "alta";
   category: string;
   overdue?: boolean;
 }
@@ -19,7 +19,7 @@ const TaskItem = React.memo(function TaskItem({
   done,
   title,
   description,
-  date,
+  due_date,
   priority,
   category,
   overdue,
@@ -59,7 +59,7 @@ const TaskItem = React.memo(function TaskItem({
           </p>
         )}
         <div className="flex items-center gap-2 mt-2 text-xs text-gray-500">
-          <time>{new Date(date).toLocaleDateString()}</time>
+          <time>{new Date(due_date).toLocaleDateString()}</time>
           {overdue && (
             <span className="ml-2 text-red-600 font-semibold">Atrasada</span>
           )}
@@ -70,7 +70,7 @@ const TaskItem = React.memo(function TaskItem({
           className={`px-2 py-1 rounded text-xs font-semibold ${
             priority === "baixa"
               ? "bg-green-100 text-green-800"
-              : priority === "média"
+              : priority === "media"
               ? "bg-yellow-100 text-yellow-800"
               : "bg-red-100 text-red-800"
           }`}
@@ -91,9 +91,10 @@ export default function TaskList() {
   const loadTasks = useTasksStore((state) => state.loadTasks);
 
 
-  useEffect(() => {
-    loadTasks();
-  }, [loadTasks]);
+ useEffect(() => {
+  loadTasks(); // Apenas ao montar o componente
+}, []);
+
 
   if (!tarefas.length)
     return (

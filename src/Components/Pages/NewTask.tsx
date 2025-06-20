@@ -12,15 +12,15 @@ import {
 } from "../../components/ui/popover";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import api from "../../services/api";
 import { useTasksStore, Tarefa } from "../../Zustand/Store/TaksStore";
+
 
 function Novatarefa() {
   const [date, setDate] = useState<Date | undefined>(undefined);
-  const [prioridade, setPrioridade] = useState("");
-  const [categoria, setCategoria] = useState("");
-  const [titulo, setTitulo] = useState("");
-  const [descricao, setDescricao] = useState("");
+  const [priority, setPriority] = useState("");
+  const [category, setCategory] = useState("");
+  const [title, settitle] = useState("");
+  const [description, setDescription] = useState("");
 
   const navigate = useNavigate();
 
@@ -28,49 +28,52 @@ function Novatarefa() {
 
   const handleResetForm = () => {
     setDate(undefined);
-    setPrioridade("");
-    setCategoria("");
-    setTitulo("");
-    setDescricao("");
+    setPriority("");
+    setCategory("");
+    settitle("");
+    setDescription("");
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+
+// ...
+
+const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
 
-  if (!prioridade) {
-    alert("Por favor, selecione a prioridade.");
+  if (!priority || !category) {
+    alert("Preencha todos os campos obrigatórios.");
     return;
   }
 
-  if (!categoria) {
-    alert("Por favor, selecione a categoria.");
+  // Validação de data no front:
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  if (!date) {
+    alert("Por favor, selecione uma data de vencimento.");
     return;
   }
+
+  // zera horas do date selecionado
+  const selected = new Date(date);
+  selected.setHours(0, 0, 0, 0);
+
+  if (selected < today) {
+    alert("A data de vencimento não pode ser anterior a hoje.");
+    return;
+  }
+
+  // Formata localmente sem UTC
+  const due_date = format(date, "yyyy-MM-dd");  // ← aqui a mudança
 
   try {
-    const response = await api.post("/api/tasks", {
-      title: titulo,
-      description: descricao,
-      due_date: date ? date.toISOString().split("T")[0] : null,
-      priority: prioridade,
-      category: categoria,
+    await useTasksStore.getState().addTask({
+      title,
+      description,
+      due_date,
+      priority: priority as "baixa" | "media" | "alta",
+      category,
     });
-
-    const novaTarefa = response.data; // ajuste conforme o formato do backend
-
-    // Adaptar os campos para Tarefa se necessário
-    const tarefaFormatada: Tarefa = {
-      id: novaTarefa.id,
-      done: novaTarefa.done ?? false,
-      title: novaTarefa.titulo || novaTarefa.title || titulo,
-      description: novaTarefa.descricao || novaTarefa.description || descricao,
-      date: novaTarefa.vencimento || novaTarefa.due_date || (date ? date.toISOString().split("T")[0] : ""),
-      priority: novaTarefa.prioridade || novaTarefa.priority || prioridade,
-      category: novaTarefa.categoria || novaTarefa.category || categoria,
-      overdue: false, // opcional, pode calcular se quiser
-    };
-
-    useTasksStore.getState().addTask(tarefaFormatada); // adiciona localmente
 
     navigate("/");
   } catch (error) {
@@ -78,6 +81,8 @@ function Novatarefa() {
     alert("Erro ao criar tarefa");
   }
 };
+
+
 
 
   return (
@@ -111,8 +116,8 @@ function Novatarefa() {
           </label>
           <input
             type="text"
-            value={titulo}
-            onChange={(e) => setTitulo(e.target.value)}
+            value={title}
+            onChange={(e) => settitle(e.target.value)}
             placeholder="Digite o título da tarefa..."
             className="px-6 py-2 rounded-sm border border-zinc-300 w-full placeholder:text-gray-500 focus:outline-none focus:border-emerald-600 transition-colors duration-300"
             required
@@ -122,8 +127,8 @@ function Novatarefa() {
         <div className="mt-5 pl-0 p-2">
           <label className="text-base font-semibold mb-2 block">Descrição</label>
           <textarea
-            value={descricao}
-            onChange={(e) => setDescricao(e.target.value)}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
             placeholder="Descreva os detalhes da sua tarefa..."
             className="w-full min-h-[150px] px-6 py-3 rounded-sm border border-zinc-300 placeholder:text-gray-500 focus:outline-none focus:border-emerald-600 transition-colors duration-300"
           />
@@ -133,8 +138,8 @@ function Novatarefa() {
           <div className="mt-5 pl-0 p-2">
             <label className="text-base font-semibold mb-2 block">Prioridade *</label>
             <select
-              value={prioridade}
-              onChange={(e) => setPrioridade(e.target.value)}
+              value={priority}
+              onChange={(e) => setPriority(e.target.value)}
               className="w-full border bg-white border-zinc-300 rounded px-3 py-2"
               required
             >
@@ -148,8 +153,8 @@ function Novatarefa() {
           <div className="mt-5 pl-0 p-2">
             <label className="text-base font-semibold mb-2 block">Categoria *</label>
             <select
-              value={categoria}
-              onChange={(e) => setCategoria(e.target.value)}
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
               className="w-full border bg-white border-zinc-300 rounded px-3 py-2"
               required
             >
@@ -158,7 +163,7 @@ function Novatarefa() {
               <option value="pessoal">Pessoal</option>
               <option value="estudos">Estudos</option>
               <option value="casa">Casa</option>
-              <option value="saúde">Saúde</option>
+              <option value="saude">Saúde</option>
             </select>
           </div>
         </div>
@@ -200,7 +205,7 @@ function Novatarefa() {
           </Button>
           <Button
             type="submit"
-            className="bg-emerald-600 hover:bg-emerald-700 text-white text-lg p-6 font-bold"
+            className="bg-emerald-600 hover:bg-emerald-700 text-white text-lg p-6 font-bold "
           >
             Criar Tarefa
           </Button>
