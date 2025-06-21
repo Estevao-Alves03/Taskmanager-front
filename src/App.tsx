@@ -6,6 +6,7 @@ import Progress from "./Layout/Progress";
 import MyTasks from './Components/Pages/MyTasks'
 import NewTask from "./Components/Pages/NewTask"
 import TaskFilter from "./Components/Pages/TaskFilter"
+import EditTask from "./Components/Pages/EditTask"
 // store do zustand para condiçao
 import { useTasksStore } from "./Zustand/Store/TaksStore";
 
@@ -36,6 +37,7 @@ function App() {
         <Routes>
             <Route path="/" element={<MainLayout/>} />
             <Route path="/NewTask" element={<NewTask/>} />
+            <Route path="/EditTask" element={<EditTask/>}/>
         </Routes>
       </Router>
   )

@@ -1,6 +1,9 @@
 import { useEffect } from "react";
 import { useTasksStore } from "../../Zustand/Store/TaksStore";
 import React from "react";
+import { MdOutlineEdit } from "react-icons/md";
+import { LiaTrashSolid } from "react-icons/lia";
+import { useNavigate } from "react-router-dom";
 
 interface TaskItemProps {
   id: string;
@@ -25,11 +28,18 @@ const TaskItem = React.memo(function TaskItem({
   overdue,
 }: TaskItemProps) {
   const toggleConcluida = useTasksStore((state) => state.toggleConcluida);
+  const deletetask = useTasksStore((state) => state.deletetask)
+
+const navigate = useNavigate()
+
+function EditTask() {
+  navigate('/EditTask')
+}
   
 
   return (
     <div
-      className={`flex items-start gap-4 p-4 rounded-md border ${
+      className={`flex items-start gap-6 p-4 rounded-md border ${
         done ? "bg-gray-100 border-gray-300" : "bg-white border-gray-200"
       }`}
     >
@@ -80,6 +90,18 @@ const TaskItem = React.memo(function TaskItem({
         <span className="px-2 py-1 rounded bg-gray-100 text-gray-800 text-xs font-semibold">
           {category}
         </span>
+        <div className="flex justify-around text-lg">
+          <span className="hover:text-emerald-600">
+              <button onClick={EditTask}>
+                <MdOutlineEdit/>
+              </button>
+          </span>
+          <span className="hover:text-red-700">
+            <button onClick={() => deletetask(id)}>
+              <LiaTrashSolid/>
+            </button>
+            </span>
+        </div>
       </div>
     </div>
   );

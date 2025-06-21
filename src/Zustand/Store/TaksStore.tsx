@@ -23,6 +23,7 @@ interface TasksStore {
   toggleConcluida: (id: string) => void;
   loadTasks: () => Promise<void>;
   addTask: (tarefa: Omit<Tarefa, "id" | "done">) => void;
+  deletetask: (id: string) => void;
 }
 export const useTasksStore = create<TasksStore>()((set, get) => ({
   tarefas: [],
@@ -125,7 +126,28 @@ addTask: async (novaTarefa) => {
   }
 },
 
+deletetask: async (id: string) => {
+  
+  const confirmaçao = confirm('Tem certeza que deseja excluir a tarefa?')
+  if(!confirmaçao) return;
 
+  try {
+      const response = await fetch(`http://localhost:8000/api/tasks/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    
+    if(!response.ok){
+      throw new Error ('Erro ao excluir a tarefa')
+    }
 
+    await get().loadTasks()
 
+    console.log('Tarefa excluida com sucesso')
+  } catch(error){
+    console.log('Erro:', error)
+  }
+}
 }));
