@@ -12,15 +12,21 @@ import {
 } from "../../components/ui/popover";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { useTasksStore, Tarefa } from "../../Zustand/Store/TaksStore";
-
+import { useTasksStore } from "../../Zustand/Store/TaksStore";
+import Alert from "../../Layout/Alert";
+import Loading from "../../img/Loading.svg";
 
 function Novatarefa() {
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [priority, setPriority] = useState("");
   const [category, setCategory] = useState("");
-  const [title, settitle] = useState("");
+  const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [alert, setAlert] = useState<null | {
+    message: string;
+    type: "success" | "error" | "warning" | "info";
+  }>(null);
 
   const navigate = useNavigate();
 
@@ -30,60 +36,87 @@ function Novatarefa() {
     setDate(undefined);
     setPriority("");
     setCategory("");
-    settitle("");
+    setTitle("");
     setDescription("");
   };
 
+  // ...
 
-// ...
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
+    if (!title.trim()) {
+      setAlert({ message: "Preencha o título da tarefa.", type: "info" });
+      setTimeout(() => {
+        setAlert(null);
+      }, 1550);
+      return;
+    }
 
-  if (!priority || !category) {
-    alert("Preencha todos os campos obrigatórios.");
-    return;
-  }
+    if (!priority) {
+      setAlert({ message: "Selecione a prioridade da tarefa.", type: "info" });
+      setTimeout(() => {
+        setAlert(null);
+      }, 1550);
+      return;
+    }
 
-  // Validação de data no front:
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+    if (!category) {
+      setAlert({ message: "Selecione a categoria da tarefa.", type: "info" });
+      setTimeout(() => {
+        setAlert(null);
+      }, 1550);
+      return;
+    }
 
-  if (!date) {
-    alert("Por favor, selecione uma data de vencimento.");
-    return;
-  }
+    if (!date) {
+      setAlert({ message: "Selecione uma data de vencimento", type: "info" });
+      setTimeout(() => {
+        setAlert(null);
+      }, 1550);
+      return;
+    }
 
-  // zera horas do date selecionado
-  const selected = new Date(date);
-  selected.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-  if (selected < today) {
-    alert("A data de vencimento não pode ser anterior a hoje.");
-    return;
-  }
+    const selected = new Date(date);
+    selected.setHours(0, 0, 0, 0);
 
-  // Formata localmente sem UTC
-  const due_date = format(date, "yyyy-MM-dd");  // ← aqui a mudança
+    if (selected < today) {
+      setAlert({
+        message: "A data de vencimento não pode ser anterior a hoje.",
+        type: "warning",
+      });
+       setTimeout(() => {
+        setAlert(null);
+      }, 2000);
+      return;
+    }
 
-  try {
-    await useTasksStore.getState().addTask({
-      title,
-      description,
-      due_date,
-      priority: priority as "baixa" | "media" | "alta",
-      category,
-    });
+    const due_date = format(date, "yyyy-MM-dd");
 
-    navigate("/");
-  } catch (error) {
-    console.error("Erro ao criar tarefa:", error);
-    alert("Erro ao criar tarefa");
-  }
-};
+    try {
+      await useTasksStore.getState().addTask({
+        title,
+        description,
+        due_date,
+        priority: priority as "baixa" | "media" | "alta",
+        category,
+      });
 
+      setAlert({ message: "Criando a tarefa...", type: "success" });
+      setIsLoading(true);
 
-
+      setTimeout(() => {
+        setIsLoading(false);
+        navigate("/");
+      }, 2000);
+    } catch (error) {
+      console.error("Erro ao criar tarefa:", error);
+      setAlert({ message: "Erro ao criar a tarefa", type: "error" });
+    }
+  };
 
   return (
     <div className="mx-72 mb-20 p-4 mt-4">
@@ -117,15 +150,19 @@ const handleSubmit = async (e: React.FormEvent) => {
           <input
             type="text"
             value={title}
-            onChange={(e) => settitle(e.target.value)}
+            onChange={(e) => setTitle(e.target.value)}
             placeholder="Digite o título da tarefa..."
             className="px-6 py-2 rounded-sm border border-zinc-300 w-full placeholder:text-gray-500 focus:outline-none focus:border-emerald-600 transition-colors duration-300"
-            required
           />
         </div>
 
         <div className="mt-5 pl-0 p-2">
-          <label className="text-base font-semibold mb-2 block">Descrição</label>
+          <label className="text-base font-semibold mb-2 block">
+            <div className="flex items-center gap-2">
+              Descrição
+              <p className="text-zinc-600 text-sm font-normal">(opcional)</p>
+            </div>
+          </label>
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
@@ -136,12 +173,13 @@ const handleSubmit = async (e: React.FormEvent) => {
 
         <div className="grid grid-cols-2 gap-4">
           <div className="mt-5 pl-0 p-2">
-            <label className="text-base font-semibold mb-2 block">Prioridade *</label>
+            <label className="text-base font-semibold mb-2 block">
+              Prioridade *
+            </label>
             <select
               value={priority}
               onChange={(e) => setPriority(e.target.value)}
               className="w-full border bg-white border-zinc-300 rounded px-3 py-2"
-              required
             >
               <option value="">Selecione a prioridade</option>
               <option value="baixa">🟢 Baixa</option>
@@ -151,12 +189,13 @@ const handleSubmit = async (e: React.FormEvent) => {
           </div>
 
           <div className="mt-5 pl-0 p-2">
-            <label className="text-base font-semibold mb-2 block">Categoria *</label>
+            <label className="text-base font-semibold mb-2 block">
+              Categoria *
+            </label>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
               className="w-full border bg-white border-zinc-300 rounded px-3 py-2"
-              required
             >
               <option value="">Selecione a categoria</option>
               <option value="trabalho">Trabalho</option>
@@ -169,7 +208,9 @@ const handleSubmit = async (e: React.FormEvent) => {
         </div>
 
         <div className="mt-5 pl-0 p-2">
-          <label className="text-base font-semibold mb-2 block">Data do vencimento</label>
+          <label className="text-base font-semibold mb-2 block">
+            Data do vencimento *
+          </label>
           <Popover>
             <PopoverTrigger asChild>
               <Button
@@ -211,6 +252,17 @@ const handleSubmit = async (e: React.FormEvent) => {
           </Button>
         </div>
       </form>
+
+      {alert && <Alert message={alert.message} type={alert.type} />}
+      {isLoading && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <img
+            src={Loading}
+            alt="Carregando..."
+            className="w-36 h-44"
+          />
+        </div>
+      )}
     </div>
   );
 }

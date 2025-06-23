@@ -127,10 +127,6 @@ addTask: async (novaTarefa) => {
 },
 
 deletetask: async (id: string) => {
-  
-  const confirmaçao = confirm('Tem certeza que deseja excluir a tarefa?')
-  if(!confirmaçao) return;
-
   try {
       const response = await fetch(`http://localhost:8000/api/tasks/${id}`, {
       method: 'DELETE',
