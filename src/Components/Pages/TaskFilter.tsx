@@ -34,7 +34,7 @@ function TaskFilter() {
   return (
     <div>
       {isFiltered && filteredTasks.length > 0 && (
-        <div className="flex flex-col gap-4 mx-72 mt-5">
+        <div className="flex flex-col gap-4 w-full mt-5">
           {filteredTasks.map(
             ({
               id,
@@ -48,7 +48,7 @@ function TaskFilter() {
             }: TaskItemProps) => (
               <div
                 key={id}
-                className={`flex items-start gap-4 p-4 rounded-md border ${
+                className={`flex items-start gap-4 p-4 rounded-md border border-gray-300 ${
                   done ? "bg-gray-100 border-gray-300" : "bg-white border-gray-200"
                 }`}
               >

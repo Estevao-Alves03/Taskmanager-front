@@ -255,7 +255,7 @@ function Novatarefa() {
 
       {alert && <Alert message={alert.message} type={alert.type} />}
       {isLoading && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50">
           <img
             src={Loading}
             alt="Carregando..."

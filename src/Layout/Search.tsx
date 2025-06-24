@@ -31,7 +31,7 @@ function Search() {
   }, [preFiltered, searchTerm]);
 
   return (
-    <div className="mx-72 border-2 border-zinc-300 p-4 rounded-md">
+    <div className="mx-full border-2 border-zinc-300 p-4 rounded-md">
       {/* Barra de busca e filtro */}
       <div className="flex gap-4">
         <div className="relative flex-1">

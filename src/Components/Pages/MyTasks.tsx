@@ -147,22 +147,22 @@ export default function TaskList() {
 
 
   if (!tarefas.length)
-    return <p className="mx-72 mt-5 text-lg font-serif">Nenhuma tarefa encontrada.</p>;
+    return <p className="w-full mt-6 ml-2 text-2xl font-serif">Nenhuma tarefa encontrada.</p>;
 
  return (
   <>
     {alert && <Alert message={alert.message} type={alert.type} />}
     {tarefas.length === 0 ? (
-      <p className="mx-72 mt-5 text-lg font-serif">Nenhuma tarefa encontrada.</p>
+      <p className="w-full mt-6 ml-2 text-2xl font-serif">Nenhuma tarefa encontrada.</p>
     ) : (
-      <div className="flex flex-col gap-4 mx-72 mt-5">
+      <div className="flex flex-col gap-4 w-full mt-5">
         {tarefas.map((task) => (
           <TaskItem key={task.id} {...task} onDelete={() => handleDelete(task.id)} />
         ))}
       </div>
     )}
     {isLoading && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50">
           <img
             src={Loading}
             alt="Carregando..."
