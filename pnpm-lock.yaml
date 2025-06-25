@@ -78,6 +78,9 @@ importers:
       '@eslint/js':
         specifier: ^9.28.0
         version: 9.28.0
+      '@types/date-fns':
+        specifier: ^2.6.3
+        version: 2.6.3
       '@types/node':
         specifier: ^24.0.1
         version: 24.0.1
@@ -1007,6 +1010,10 @@ packages:
 
   '@types/babel__traverse@7.20.7':
     resolution: {integrity: sha512-dkO5fhS7+/oos4ciWxyEyjWe48zmG6wbCheo/G2ZnHx4fs3EU6YC6UM8rk56gAjNJ9P3MTH2jo5jb92/K6wbng==}
+
+  '@types/date-fns@2.6.3':
+    resolution: {integrity: sha512-Ke1lw2Ni1t/wMUoLtKFmSNCLozcTBd6vmMqFP4hRzXn6qzkNt97bPAX0x5Y/c15DP43kKvwW1ycStD5+43jVQA==}
+    deprecated: This is a stub types definition. date-fns provides its own type definitions, so you do not need this installed.
 
   '@types/estree@1.0.7':
     resolution: {integrity: sha512-w28IoSUCJpidD/TGviZwwMJckNESJZXFu7NBZ5YJ4mEUnNraUn9Pm8HSZm/jDF1pDWYKspWE7oVphigUPRakIQ==}
@@ -2949,6 +2956,10 @@ snapshots:
   '@types/babel__traverse@7.20.7':
     dependencies:
       '@babel/types': 7.27.6
+
+  '@types/date-fns@2.6.3':
+    dependencies:
+      date-fns: 4.1.0
 
   '@types/estree@1.0.7': {}
 

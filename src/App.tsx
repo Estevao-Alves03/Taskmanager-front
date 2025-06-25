@@ -51,7 +51,7 @@ function App() {
         <Route path="/Register" element={<Register />} />
         <Route path="/Login" element={<Login />} />
         <Route path="/NewTask" element={<NewTask />} />
-        <Route path="/EditTask" element={<EditTask />} />
+        <Route path="/EditTask/:id" element={<EditTask />} />
       </Routes>
     </Router>
   );

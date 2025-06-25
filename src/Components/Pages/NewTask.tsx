@@ -1,15 +1,11 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { IoMdArrowBack } from "react-icons/io";
 import { MdAdd } from "react-icons/md";
 import { SlCalender } from "react-icons/sl";
 import { Calendar } from "../../components/ui/calendar";
 import { Button } from "../../components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "../../components/ui/popover";
+import {Popover, PopoverContent, PopoverTrigger,} from "../../components/ui/popover";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useTasksStore } from "../../Zustand/Store/TaksStore";
@@ -223,13 +219,13 @@ function Novatarefa() {
                   : "Selecione uma data"}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
+            <PopoverContent className="w-auto p-0" autoFocus>
               <Calendar
                 mode="single"
                 selected={date}
                 onSelect={setDate}
-                initialFocus
                 locale={ptBR}
+                // initialFocus
               />
             </PopoverContent>
           </Popover>

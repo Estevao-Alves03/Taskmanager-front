@@ -4,9 +4,9 @@ import React from "react";
 import { MdOutlineEdit } from "react-icons/md";
 import { LiaTrashSolid } from "react-icons/lia";
 import { useNavigate } from "react-router-dom";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 import Alert from "../../Layout/Alert";
-import Loading from "../../img/Loading.svg"
+import Loading from "../../img/Loading.svg";
 
 interface TaskItemProps {
   id: string;
@@ -20,7 +20,6 @@ interface TaskItemProps {
   onDelete: () => void;
 }
 
-
 const TaskItem = React.memo(function TaskItem({
   id,
   done,
@@ -30,18 +29,22 @@ const TaskItem = React.memo(function TaskItem({
   priority,
   category,
   overdue,
-  onDelete
+  onDelete,
 }: TaskItemProps) {
   const toggleConcluida = useTasksStore((state) => state.toggleConcluida);
-  const navigate = useNavigate() 
+  const [isLoading, setIsLoading] = useState(false);
+  const [alert, setAlert] = useState<null | {
+    message: string;
+    type: "success" | "error" | "warning" | "info";
+  }>(null);
 
+  const navigate = useNavigate();
 
-function EditTask() {
-  navigate('/EditTask')
-}
-  
+  function handleEdit() {
+    navigate(`/EditTask/${id}`);
+  }
 
- return (
+  return (
     <>
       <div
         className={`flex items-start gap-6 p-4 rounded-md border ${
@@ -97,78 +100,87 @@ function EditTask() {
           </span>
           <div className="flex justify-around text-lg">
             <span className="hover:text-emerald-600">
-                <button onClick={EditTask}>
-                  <MdOutlineEdit/>
-                </button>
+              <button onClick={handleEdit}>
+                <MdOutlineEdit />
+              </button>
             </span>
             <span className="hover:text-red-700">
-            <button onClick={onDelete}>
-               <LiaTrashSolid />
-            </button>
+              <button onClick={onDelete}>
+                <LiaTrashSolid />
+              </button>
             </span>
           </div>
         </div>
       </div>
+      {alert && <Alert message={alert.message} type={alert.type} />}
     </>
   );
 });
-
 
 export default function TaskList() {
   const tarefas = useTasksStore((state) => state.tarefas);
   const loadTasks = useTasksStore((state) => state.loadTasks);
   const deletetask = useTasksStore((state) => state.deletetask);
-  const [isLoading, setIsLoading] = useState(false)
-  const [alert, setAlert] = useState<null | { message: string; type: "success" | "error" | "warning" | "info" }>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [alert, setAlert] = useState<null | {
+    message: string;
+    type: "success" | "error" | "warning" | "info";
+  }>(null);
 
   useEffect(() => {
     loadTasks();
   }, []);
 
   const handleDelete = async (id: string) => {
-  const result = await Swal.fire({
-    title: "Tem certeza que deseja excluir a tarefa ?",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonText: "Sim, excluir tarefa",
-    cancelButtonText: "Cancelar",
-  });
+    const result = await Swal.fire({
+      title: "Tem certeza que deseja excluir a tarefa ?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sim, excluir tarefa",
+      cancelButtonText: "Cancelar",
+    });
 
-  if (result.isConfirmed) {
-    setAlert({ message: "Excluindo a tarefa...", type: "success" });
-    setIsLoading(true)
-    setTimeout(() => {
-      deletetask(id);
-      setAlert(null);
-      setIsLoading(false)
-    }, 2550);
-  }
-};
-
+    if (result.isConfirmed) {
+      setAlert({ message: "Excluindo a tarefa...", type: "success" });
+      setIsLoading(true);
+      setTimeout(() => {
+        deletetask(id);
+        setAlert(null);
+        setIsLoading(false);
+      }, 2550);
+    }
+  };
 
   if (!tarefas.length)
-    return <p className="w-full mt-6 ml-2 text-2xl font-serif">Nenhuma tarefa encontrada.</p>;
+    return (
+      <p className="w-full mt-6 ml-2 text-2xl font-serif">
+        Nenhuma tarefa encontrada.
+      </p>
+    );
 
- return (
-  <>
-    {alert && <Alert message={alert.message} type={alert.type} />}
-    {tarefas.length === 0 ? (
-      <p className="w-full mt-6 ml-2 text-2xl font-serif">Nenhuma tarefa encontrada.</p>
-    ) : (
-      <div className="flex flex-col gap-4 w-full mt-5">
-        {tarefas.map((task) => (
-          <TaskItem key={task.id} {...task} onDelete={() => handleDelete(task.id)} />
-        ))}
-      </div>
-    )}
-    {isLoading && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50">
-          <img
-            src={Loading}
-            alt="Carregando..."
-            className="w-36 h-44"
-          />
+  return (
+    <>
+      {alert && <Alert message={alert.message} type={alert.type} />}
+      {tarefas.length === 0 ? (
+        <p className="w-full mt-6 ml-2 text-2xl font-serif">
+          Nenhuma tarefa encontrada.
+        </p>
+      ) : (
+        <div className="flex flex-col gap-4 w-full mt-5">
+          {tarefas.map((task) => (
+            <TaskItem
+              key={task.id}
+              {...task}
+              onDelete={() => handleDelete(task.id)}
+            />
+          ))}
         </div>
       )}
-  </>
-)}
+      {isLoading && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50">
+          <img src={Loading} alt="Carregando..." className="w-36 h-44" />
+        </div>
+      )}
+    </>
+  );
+}

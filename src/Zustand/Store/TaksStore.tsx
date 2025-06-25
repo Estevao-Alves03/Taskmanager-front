@@ -24,6 +24,7 @@ interface TasksStore {
   loadTasks: () => Promise<void>;
   addTask: (tarefa: Omit<Tarefa, "id" | "done">) => void;
   deletetask: (id: string) => void;
+  editTask: (id: string, updatedData: Omit<Tarefa, "id" | "overdue">) => Promise<void>; // ✅ aqui
 }
 export const useTasksStore = create<TasksStore>()((set, get) => ({
   tarefas: [],
@@ -145,5 +146,27 @@ deletetask: async (id: string) => {
   } catch(error){
     console.log('Erro:', error)
   }
-}
+},
+
+editTask: async (id: string, updatedData: Omit<Tarefa, "id" | "overdue">) => {
+  try {
+    const response = await fetch(`http://localhost:8000/api/tasks/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updatedData),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Erro ao editar tarefa: ${response.status} - ${errorText}`);
+    }
+
+    await get().loadTasks();
+
+    console.log("Tarefa atualizada com sucesso");
+  } catch (error) {
+    console.error("Erro ao editar tarefa:", error);
+  }
+},
+
 }));
