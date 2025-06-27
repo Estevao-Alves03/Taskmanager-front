@@ -12,11 +12,11 @@ import { useState, useEffect } from "react";
 
 function SidebarMenu() {
   const menu = [
-    { name: "Dashboard", icon: Home, to: "/" },
-    { name: "Calendário", icon: Calendar, to: "/" },
+    { name: "Dashboard", icon: Home, to: " " },
+    { name: "Calendário", icon: Calendar, to: " " },
     { name: "Nova Tarefa", icon: Plus, to: "/Newtask" },
-    { name: "Perfil", icon: User, to: "/" },
-    { name: "Configurações", icon: Settings, to: "/" },
+    { name: "Perfil", icon: User, to: " " },
+    { name: "Configurações", icon: Settings, to: "/SettingsPage" },
   ];
 
   const isOpen = useSideBarStore((state) => state.isOpen);

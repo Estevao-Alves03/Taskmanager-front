@@ -16,6 +16,7 @@ function Login() {
         <CardContent className="p-8">
           <h2 className="font-bold text-2xl text-gray-600 text-center mb-6">
             Bem-Vindo de Volta!
+          <p className='text-sm text-emerald-600'>É bom te ver de novo</p>
           </h2>
           <form className="space-y-4">
             <div className="space-y-2">

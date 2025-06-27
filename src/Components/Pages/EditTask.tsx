@@ -41,7 +41,7 @@ function EditTask() {
     if (!id) return;
 
     setIsLoading(true);
-    setAlert({ message: "buscando a tarefa...", type: "warning" });
+    setAlert({ message: "buscando a tarefa...", type: "info" });
 
     fetch(`http://localhost:8000/api/tasks/${id}`)
       .then((res) => res.json())
