@@ -10,6 +10,7 @@ import EditTask from "./Components/Pages/EditTask";
 import Welcome from "./Components/Pages/Welcome";
 import Register from "./Components/Pages/Register";
 import SettingsPage from "./Components/Pages/SettingsPage";
+import Profile  from "./Components/Pages/Profile";
 import Login from "./Components/Pages/Login";
 import SidebarMenu from "./Layout/SidebarMenu";
 import Navbar from "./Layout/Navbar"
@@ -54,6 +55,7 @@ function App() {
         <Route path="/NewTask" element={<NewTask />} />
         <Route path="/EditTask/:id" element={<EditTask />} />
         <Route path="/SettingsPage" element={<SettingsPage/>} />
+        <Route path="/Profile" element={<Profile/>} />
       </Routes>
     </Router>
   );

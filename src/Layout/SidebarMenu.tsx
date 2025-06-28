@@ -15,7 +15,7 @@ function SidebarMenu() {
     { name: "Dashboard", icon: Home, to: " " },
     { name: "Calendário", icon: Calendar, to: " " },
     { name: "Nova Tarefa", icon: Plus, to: "/Newtask" },
-    { name: "Perfil", icon: User, to: " " },
+    { name: "Perfil", icon: User, to: "/Profile" },
     { name: "Configurações", icon: Settings, to: "/SettingsPage" },
   ];
 
