@@ -12,7 +12,7 @@ import Register from "./Components/Pages/Register";
 import SettingsPage from "./Components/Pages/SettingsPage";
 import Profile  from "./Components/Pages/Profile";
 import Login from "./Components/Pages/Login";
-import SidebarMenu from "./Layout/SidebarMenu";
+import SideMenu from "./Layout/SideMenu";
 import Navbar from "./Layout/Navbar"
 // store do zustand para condiçao
 import { useTasksStore } from "./Zustand/Store/TaksStore";
@@ -31,7 +31,7 @@ function MainLayout() {
           isOpen ? "ml-64" : "ml-0"
         }`}
       >
-        <SidebarMenu />
+        <SideMenu />
         <main className="p-4 min-h-screen mb-12">
           <Navbar/>
           <TaskBar />
